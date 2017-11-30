@@ -1,101 +1,103 @@
 package com.yann.advance;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.ViewGroup;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.yann.advance.adapter.HomeRecyclerViewAdapter;
+import com.yann.advance.base.BaseActivity;
+import com.yann.advance.db.DataActivity;
+import com.yann.advance.entitry.HomeItem;
+import com.yann.advance.log.LogTestActivity;
+import com.yann.advance.view.BaseToolBar;
+
+import java.util.ArrayList;
+
+import butterknife.BindView;
+
+public class MainActivity extends BaseActivity {
+
+    private static final Class<?>[] ACTIVITY = {LogTestActivity.class, DataActivity.class};
+    private static final String[] TITLE = {"日志测试", "数据库"};
+    private static final int[] IMG = {R.mipmap.ic_launcher, R.mipmap.ic_launcher};
+
+    private ArrayList<HomeItem> mDataList;
+
+    @BindView(R.id.recyclerView) RecyclerView recyclerView;
+
+    /**
+     * 获取当前界面的布局ID
+     *
+     * @return 当前界面的布局ID
+     */
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    protected void initBundle(Bundle savedInstanceState, Intent intent) {
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+    /**
+     * 初始化布局内的控件
+     */
+    @Override
+    protected void initView() {
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+    }
+
+    /**
+     * 初始化相关数据
+     */
+    @Override
+    protected void initData() {
+        mDataList = new ArrayList<>();
+        for (int i = 0; i < TITLE.length; i++) {
+            HomeItem item = new HomeItem();
+            item.setTitle(TITLE[i]);
+            item.setActivity(ACTIVITY[i]);
+            item.setImageResource(IMG[i]);
+            mDataList.add(item);
+        }
+
+        initAdapter();
+    }
+
+    @Override
+    protected int getStatusColor() {
+        return 0;
+    }
+
+    /**
+     * 初始化toolbar
+     *
+     * @param toolbar
+     */
+    @Override
+    protected void initToolbar(BaseToolBar toolbar) {
+        super.initToolbar(toolbar);
+        toolbar.setVisibility(View.GONE);
+    }
+
+    private void initAdapter() {
+        BaseQuickAdapter homeAdapter = new HomeRecyclerViewAdapter(R.layout.home_item_view, mDataList);
+        homeAdapter.openLoadAnimation();
+        View top = getLayoutInflater().inflate(R.layout.top_view, (ViewGroup) recyclerView.getParent(), false);
+        homeAdapter.addHeaderView(top);
+        homeAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                Intent intent = new Intent(MainActivity.this, ACTIVITY[position]);
+//                startActivity(intent);
+                launcher(ACTIVITY[position]);
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        recyclerView.setAdapter(homeAdapter);
     }
 }

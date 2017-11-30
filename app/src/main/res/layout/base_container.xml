@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.yann.advance.view.BaseToolBar
+            android:id="@+id/titleBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/OverFlowMenuTheme"
+            android:background="?attr/colorPrimary">
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:singleLine="true"
+                android:textColor="@color/color_white"
+                android:textSize="18sp"
+                android:text=""/>
+            <FrameLayout
+                android:id="@+id/extendFrame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dip"
+                android:layout_marginBottom="6dip"
+                android:background="@color/colorAccent"
+                android:visibility="gone"/>
+        </com.yann.advance.view.BaseToolBar>
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:max="100"
+            android:progressDrawable="@drawable/webview_progressbar"
+            android:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/rootView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+  </LinearLayout>
+
+</FrameLayout>
